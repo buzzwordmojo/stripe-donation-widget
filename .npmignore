@@ -1,0 +1,86 @@
+# Source files (keep only dist/)
+src/
+
+# Development files
+.git/
+.github/
+.vscode/
+.husky/
+node_modules/
+coverage/
+
+# Build tools
+rollup.config.js
+tsconfig.json
+jest.config.js
+.eslintrc.*
+.prettierrc.*
+
+# Documentation (keep README.md and examples/)
+*.md
+!README.md
+!CHANGELOG.md
+
+# Environment files
+.env*
+
+# Logs
+*.log
+npm-debug.log*
+
+# Exclude extra TypeScript declarations
+dist/src/
+dist/app/
+dist/lib/
+dist/components/
+dist/hooks/
+dist/ui/
+dist/server/
+dist/types.*
+dist/config.*
+
+# Keep only the main dist files
+!dist/index.*
+!dist/server.*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# nyc test coverage
+.nyc_output
+
+# Dependency directories
+node_modules/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+
+# next.js build output
+.next
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db 
