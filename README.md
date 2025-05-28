@@ -11,15 +11,74 @@ A complete, reusable donation system with Stripe integration, real-time MRR trac
 - **🎯 Multi-project Support** - Isolated configurations per project
 - **📱 Responsive Design** - Works perfectly on all devices
 - **⚡ TypeScript Support** - Full type safety and IntelliSense
-- **🚀 Zero Setup** - Just add your Stripe keys and go
+- **🚀 One-Command Setup** - CLI tool generates everything automatically
 
-## 📦 Installation
+## 🚀 Quick Start (30 seconds!)
+
+### 1. Install & Initialize
 
 ```bash
+# Install the package
 npm install stripe-donation-widget
+
+# Generate all necessary files automatically
+npx stripe-donation-widget init
 ```
 
-## 🚀 Quick Start
+That's it! The CLI will:
+- ✅ Create API routes (`/api/donation/*`)
+- ✅ Generate example support page
+- ✅ Set up environment variables template
+- ✅ Create setup documentation
+- ✅ Detect App Router vs Pages Router automatically
+
+### 2. Add Your Stripe Keys
+
+Update `.env.local` with your keys:
+```bash
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_SECRET_KEY=sk_test_...
+```
+
+### 3. Customize & Launch
+
+```tsx
+// The CLI creates this file for you at app/support/page.tsx
+import { DonationWidget } from 'stripe-donation-widget';
+
+const config = {
+  stripePublishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
+  projectName: "Your Project",
+  projectSlug: "your-project",
+  monthly: { suggested: 5.00 },
+  annual: { suggested: 50.00 },
+  goal: { target: 100, showProgress: true }
+};
+
+export default function SupportPage() {
+  return <DonationWidget config={config} />;
+}
+```
+
+## 🎯 What Gets Generated
+
+The CLI creates everything you need:
+
+```
+your-project/
+├── app/api/donation/
+│   ├── create-checkout-session/route.ts  # Stripe checkout
+│   ├── stats/route.ts                    # MRR analytics  
+│   └── webhook/route.ts                  # Webhook handling
+├── app/support/page.tsx                  # Example support page
+├── .env.example                          # Environment template
+├── .env.local                           # Your actual keys
+└── DONATION_SETUP.md                    # Setup guide
+```
+
+## 📦 Manual Installation (Alternative)
+
+If you prefer manual setup:
 
 ### 1. Install the Package
 
@@ -27,17 +86,7 @@ npm install stripe-donation-widget
 npm install stripe-donation-widget
 ```
 
-### 2. Set Up Environment Variables
-
-```bash
-# .env.local
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-STRIPE_SECRET_KEY=sk_test_...
-```
-
-### 3. Create API Routes
-
-Create these API routes in your Next.js app:
+### 2. Create API Routes
 
 **`app/api/donation/create-checkout-session/route.ts`**
 ```typescript
@@ -47,18 +96,11 @@ import { DonationStripeManager } from 'stripe-donation-widget/server';
 export async function POST(request: NextRequest) {
   try {
     const sessionData = await request.json();
-    const stripeSecretKey = process.env.STRIPE_SECRET_KEY!;
-    
-    const manager = new DonationStripeManager(stripeSecretKey);
+    const manager = new DonationStripeManager(process.env.STRIPE_SECRET_KEY!);
     const result = await manager.createCheckoutSession(sessionData);
-    
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Checkout session creation error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create checkout session' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create checkout session' }, { status: 500 });
   }
 }
 ```
@@ -73,22 +115,17 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const projectSlug = searchParams.get('projectSlug');
     
-    if (!projectSlug) {
-      return NextResponse.json({ error: 'Project slug required' }, { status: 400 });
-    }
-    
     const manager = new DonationStripeManager(process.env.STRIPE_SECRET_KEY!);
-    const stats = await manager.getSubscriptionSummary(projectSlug);
+    const stats = await manager.getSubscriptionSummary(projectSlug!);
     
     return NextResponse.json(stats);
   } catch (error) {
-    console.error('Stats fetch error:', error);
     return NextResponse.json({ error: 'Failed to fetch stats' }, { status: 500 });
   }
 }
 ```
 
-### 4. Use the Components
+### 3. Use the Components
 
 ```tsx
 import { DonationWidget, DonationButton } from 'stripe-donation-widget';
@@ -97,14 +134,14 @@ import type { DonationConfig } from 'stripe-donation-widget';
 const config: DonationConfig = {
   stripePublishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
   projectName: "My Project",
-  projectSlug: "my-project", // Creates unique Stripe products
+  projectSlug: "my-project",
   monthly: { suggested: 5.00 },
   annual: { suggested: 50.00 },
   goal: {
     target: 100,
     showProgress: true,
     description: "Help keep this project running",
-    calculateFromSubscriptions: true // Uses real Stripe data
+    calculateFromSubscriptions: true
   }
 };
 

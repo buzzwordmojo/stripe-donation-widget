@@ -6,6 +6,9 @@
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "bin": {
+    "stripe-donation-widget": "./bin/cli.cjs"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.esm.js",
@@ -20,6 +23,7 @@
   },
   "files": [
     "dist",
+    "bin",
     "README.md",
     "examples"
   ],
