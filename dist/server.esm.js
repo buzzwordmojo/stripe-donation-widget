@@ -139,6 +139,13 @@ class DonationStripeManager {
             ],
             success_url: sessionData.successUrl,
             cancel_url: sessionData.cancelUrl,
+            subscription_data: {
+                metadata: {
+                    projectSlug: sessionData.projectSlug,
+                    donationType: sessionData.type,
+                    amount: sessionData.amount.toString(),
+                },
+            },
             metadata: {
                 projectSlug: sessionData.projectSlug,
                 donationType: sessionData.type,
